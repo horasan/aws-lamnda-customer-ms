@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'customer-microservice-rest-api
+
+  Sample SAM Template for customer-microservice-rest-api
+
+  '
+Globals:
+  Function:
+    Timeout: 20
+    Runtime: java8
+    MemorySize: 512
+    Environment:
+      Variables:
+        DEFAULT_COUNTRY: NL
+        DEFAULT_CURRENCY: EUR
+Resources:
+  CreateCustomerHandlerLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CreateCustomerHandlerLambdaFunction
+      Handler: com.horasan.customer.handler.CreateCustomerHandler::handleRequest
+      Events:
+        CustomerMSCreateEvent:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: post
+Outputs:
+  CustomerMicroserviceApi:
+    Description: API Gateway endpoint URL for create a new customer.
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/customers/
+  CreateCustomerHandlerLambdaFunction:
+    Description: Create Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - CreateCustomerHandlerLambdaFunction
+      - Arn
+  CreateCustomerHandlerLambdaFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value:
+      Fn::GetAtt:
+      - CreateCustomerHandlerLambdaFunctionRole
+      - Arn
